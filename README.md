@@ -1,10 +1,9 @@
 # HDRvision iOS DeviceSupport
 
 ![Maintained by HDRvision](https://img.shields.io/badge/Maintained%20by-HDRvision-111111?style=for-the-badge&labelColor=000000&color=2f3136)
-![Automated via Codex](https://img.shields.io/badge/Automated%20via-Codex-111111?style=for-the-badge&labelColor=000000&color=2f3136)
 ![GitHub Actions macOS](https://img.shields.io/badge/Tested%20on-GitHub%20Actions%20macOS-111111?style=for-the-badge&labelColor=000000&color=2f3136)
 
-> Maintained by HDRvision. Automated via Codex. Tested on GitHub Actions macOS runners.
+> Maintained by HDRvision. Tested on GitHub Actions macOS runners.
 
 This repository continues the archived `iGhibli/iOS-DeviceSupport` project and keeps iOS DeviceSupport bundles organized for modern Xcode installations. The fork preserves the original zip-based archive layout, adds safer deployment automation for Python 3.10+, and keeps forward-looking placeholders reserved through iOS 26.0.
 
@@ -12,7 +11,7 @@ This repository continues the archived `iGhibli/iOS-DeviceSupport` project and k
 
 When Xcode does not ship with the DeviceSupport bundle for a connected iPhone or iPad, developers get blocked from debugging on real hardware. The original project stopped at iOS 16.0. HDRvision is reviving the workflow, modernizing the tooling, and opening the door for community-contributed support files for newer iOS releases.
 
-## What changed in HDRvision
+## What changed
 
 - `deploy.py` now supports Python 3.10+ with stronger path validation, dry-run planning, JSON output, and clear permission/path errors.
 - Xcode discovery works with `DEVELOPER_DIR`, `xcode-select`, `Xcode.app`, `Xcode-beta.app`, `Xcode_16.x.app`, `Xcode_17.x.app`, and future naming variants that match `Xcode*.app`.
