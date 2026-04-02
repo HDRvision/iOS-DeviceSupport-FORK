@@ -1,166 +1,183 @@
-# iOS-DeviceSupport
+# HDRvision iOS DeviceSupport
 
-This repository holds the device support files for the iOS, and I will update it regularly.
+![Maintained by HDRvision](https://img.shields.io/badge/Maintained%20by-HDRvision-111111?style=for-the-badge&labelColor=000000&color=2f3136)
+![Automated via Codex](https://img.shields.io/badge/Automated%20via-Codex-111111?style=for-the-badge&labelColor=000000&color=2f3136)
+![GitHub Actions macOS](https://img.shields.io/badge/Tested%20on-GitHub%20Actions%20macOS-111111?style=for-the-badge&labelColor=000000&color=2f3136)
+
+> Maintained by HDRvision. Automated via Codex. Tested on GitHub Actions macOS runners.
+
+This repository continues the archived `iGhibli/iOS-DeviceSupport` project and keeps iOS DeviceSupport bundles organized for modern Xcode installations. The fork preserves the original zip-based archive layout, adds safer deployment automation for Python 3.10+, and keeps forward-looking placeholders reserved through iOS 26.0.
+
+## Why this fork exists
+
+When Xcode does not ship with the DeviceSupport bundle for a connected iPhone or iPad, developers get blocked from debugging on real hardware. The original project stopped at iOS 16.0. HDRvision is reviving the workflow, modernizing the tooling, and opening the door for community-contributed support files for newer iOS releases.
+
+## What changed in HDRvision
+
+- `deploy.py` now supports Python 3.10+ with stronger path validation, dry-run planning, JSON output, and clear permission/path errors.
+- Xcode discovery works with `DEVELOPER_DIR`, `xcode-select`, `Xcode.app`, `Xcode-beta.app`, `Xcode_16.x.app`, `Xcode_17.x.app`, and future naming variants that match `Xcode*.app`.
+- The README support matrix is generated from the repository contents instead of being maintained by hand.
+- Placeholder directories are reserved for iOS `17.0` through `26.0`.
+- GitHub Actions validates the tooling on `macos-latest` so macOS-specific checks do not depend on a personal Mac.
+
+## Repository layout
+
+```text
+DeviceSupport/
+  *.zip
+  placeholders/
+    17.0/
+    18.0/
+    ...
+    26.0/
+deploy.py
+.github/workflows/test-macos.yml
+tests/
+```
 
 ## Usage
 
-See docs: [https://ighibli.github.io/2017/03/28/Could-not-locate-device-support-files/](https://ighibli.github.io/2017/03/28/Could-not-locate-device-support-files/)
+Install any missing archives into the selected Xcode:
 
-Below command will try to unzip all new device support files to `/Applications/Xcode.app`.
-
-```sh
-sudo ./deploy.py
+```bash
+python3 deploy.py
 ```
 
-You can use `-t` if your Xcode is not in `/Applications/` or has different name.
+Preview what would happen without writing files:
 
-```sh
-sudo ./deploy.py -t /Applications/Xcode\ 9.app
+```bash
+python3 deploy.py --dry-run
 ```
 
-```sh
-./deploy.py -h
-usage: deploy.py [-h] [-t TARGET]
+Target a specific Xcode bundle, beta build, or developer directory:
 
-optional arguments:
-  -h, --help  show this help message and exit
-  -t TARGET   The path for Xcode
+```bash
+python3 deploy.py --dry-run --target /Applications/Xcode-beta.app
+python3 deploy.py --target /Applications/Xcode_16.4.app
+python3 deploy.py --target /Applications/Xcode.app/Contents/Developer
 ```
 
-## Supported versions
+Filter to a specific iOS version string:
 
-1. iOS8
-   * 8.0 `2017/04/07`
-   * 8.1 `2017/04/07`
-   * 8.2 `2017/04/07`
-   * 8.3 `2017/04/07`
-   * 8.4 `2017/04/07`
-2. iOS9
-   * 9.0 `2017/04/07`
-   * 9.1 `2017/04/07`
-   * 9.2 `2017/04/07`
-   * 9.3 `2017/04/07`
-3. iOS10
-   * 10.0 (14A345) `2017/04/07`
-   * 10.0 `2017/12/05`
-   * 10.1 (14B72) `2017/04/07`
-   * 10.1 `2017/12/05`
-   * 10.2 (14C92) `2017/04/07`
-   * 10.2 `2017/12/05`
-   * 10.3 (14E269) `2017/04/07`
-   * 10.3 `2017/12/05`
-4. iOS11
-   * 11.0 `2017/12/05`
-   * 11.1 (15B87) `2017/12/05`
-   * 11.1 `2017/12/11`
-   * 11.2 (15C107) `2017/12/11`
-   * 11.2 `2018/03/06`
-   * 11.3 (15E5167d) `2018/01/30`
-   * 11.3 (15E5201e) `2018/03/06`
-   * 11.3 `2018/04/09`
-   * 11.4 (15F5037c) `2018/04/09`
-   * 11.4 (15F5061c) `2018/07/29`
-   * 11.4 (15F79) `2018/07/29`
-   * 11.4 `2018/06/07`
-5. iOS12
-   * 12.0 (16A5288q) `2018/06/07`
-   * 12.0 (16A5308d) `2018/06/19`
-   * 12.0 (16A5318d) `2018/06/29`
-   * 12.0 (16A5327d) `2018/07/20`
-   * 12.0 (16A5339e) `2018/07/31`
-   * 12.0 (16A5354b) `2018/08/15`
-   * 12.0 (16A366) `2018/09/18`
-   * 12.0 `2019/01/29`
-   * 12.1 (16B5059d) `2018/09/21`
-   * 12.1 (16B5068g) `2018/10/08`
-   * 12.1 (16B5084a) `2018/10/16`
-   * 12.1 (16B91) `2018/10/31`
-   * 12.1 (16B5084a) `2018/10/16`
-   * 12.1 `2019/01/29`
-   * 12.2 (16E5181e) `2019/01/29`
-   * 12.2 (16E5212e) `2019/03/07`
-   * 12.2 (16E226) `2019/03/27`
-   * 12.3 `2019/06/04`
-   * 12.4 (16G73) `2019/07/22`
-   * 12.4 (FromXcode_11_Beta_7_xip) `2019/09/03`
-6. iOS13
-   * 13.0 `2019/06/04`
-   * 13.0 (FromXcode_11_Beta_7_xip) `2019/09/03`
-   * 13.1 `2019/08/28`
-   * 13.2 `2019/10/02`
-   * 13.2 (FromXcode_11.2.1_GM_Seed) `2019/11/11`
-   * 13.2 (FromXcode11.2.1(11B500)) `2019/11/15`
-   * 13.2 (FromXcode11.3(11C29)) `2019/12/23`
-   * 13.3 (FromXcode_12_GM_seed_xip) `2020/09/16`
-   * 13.4 (FromXcode_11.4_beta_3_xip) `2020/03/19`
-   * 13.4 (FromXcode11.5 (11E608c)) `2020/05/22`
-   * 13.5 (FromXocde_Beta_11.5) `2020/05/16`
-   * 13.5 (FromXcode11.5 (11E608c)) `2020/05/22`
-   * 13.5 (FromXcode_12_beta_2_xip) `2020/07/10`
-   * 13.6 (FromXcode_12_beta_2_xip `2020/07/10`
-   * 13.6 (FromXcode_12_beta_4_xip `2020/08/07`
-   * 13.7 (FromXcode_11_7_xip `2020/09/02`
-   * 13.7 (FromXcode_12_GM_seed_xip) `2020/09/16`
-7. iOS14
-   * 14.0 (FromXcode_12_beta.xip) `2020/06/23`
-   * 14.0 (FromXcode_12_beta_2_xip `2020/07/10`
-   * 14.0 (FromXcode_12_beta_3_xip `2020/07/24`
-   * 14.0 (FromXcode_12_beta_4_xip `2020/08/07`
-   * 14.0 (FromXcode_12_beta_5_xip `2020/08/18`
-   * 14.0 (FromXcode_12_beta_6_xip `2020/08/28`
-   * 14.0 (FromXcode_12_GM_seed_xip) `2020/09/16`
-   * 14.0 (FromXcode_12.2_beta_xip) `2020/09/21`
-   * 14.1 (FromXcode_12.2_beta_3_xip) `2020/10/15`
-   * 14.1 (FromXcode12.1(12A7403)) `2020/10/23`
-   * 14.2 (FromXcode_12.2_beta_xip) `2020/09/21`
-   * 14.2 (FromXcode_12.2_beta_3_xip) `2020/10/15`
-   * 14.2 (FromXcode_12.2_Release_Candidate_xip) `2020/11/09`
-   * 14.2 (FromXcode_12.3_beta_xip) `2020/11/20`
-   * 14.2 (FromXcode_12.4(12D4e)) `2021/01/28`
-   * 14.3 (FromXcode_12.3_beta_xip) `2020/11/20`
-   * 14.3 (FromXcode_12.3_Release_Candidate_xip) `2020/12/09`
-   * 14.3 (FromXcode_12.4(12D4e)) `2021/01/28`
-   * 14.4 (FromXcode_12.4_Release_Candidate_xip) `2021/01/27`
-   * 14.4 (FromXcode_12.4(12D4e)) `2021/01/28`
-   * 14.4 (FromXcode_12.5_beta.xip) `2021/02/08`
-   * 14.4 (FromXcode_12.5_Release_Candidate.xip) `2021/04/25`
-   * 14.5 (FromXcode_12.5_beta_12E5220o)) `2021/02/02`
-   * 14.5 (FromXcode_12.5_beta_2.xip) `2021/02/18`
-   * 14.5 (FromXcode_12.5_beta_3.xip) `2021/03/09`
-   * 14.5 (FromXcode_12.5_Release_Candidate.xip) `2021/04/25`
-   * 14.5 (FromXcode_13_beta.xip) `2021/06/08`
-   * 14.6 (FromXcode_12.4(12D4e)) `2021/07/16`
-8. iOS15
-   * 15.0 (FromXcode_13_beta.xip) `2021/06/08`
-   * 15.0 (FromXcode_13_beta_2.xip) `2021/07/01`
-   * 15.0 (FromXcode_13_beta_3.xip) `2021/07/16`
-   * 15.0 (FromXcode_13_beta_4.xip) `2021/08/03`
-   * 15.0 (FromXcode_13_beta_5.xip) `2021/08/20`
-   * 15.0 (FromXcode_13_Release_Candidate.xip) `2021/09/16`
-   * 15.0 (FromXcode_13.2.1(13C100)) `2022/02/15`
-   * 15.2 (FromXcode_13.2.1(13C100)) `2022/02/15`
-   * 15.2 (FromXcode_13.3_beta_2.xip) `2022/02/16`
-   * 15.4 (FromXcode_13.3_beta_2.xip) `2022/02/16`
-   * 15.4 (FromXcode_13.3(13E113)) `2022/03/17`
-   * 15.4 (FromXcode_13.4(13F17a)) `2022/05/27`
-   * 15.5 (FromXcode_13.4(13F17a)) `2022/05/27`
-   * 15.5 (FromXcode_14.0.1_Release_Candidate.xip) `2022/09/20`
-   * 15.6 (FromXcode_13.3)
-   * 15.6 (FromXcode_14.1_Release_Candidate.xip) `2022/10/20`
-   * 15.7 (FromXcode_14.1_Release_Candidate.xip) `2022/10/20`
-9. iOS16
-   * 16.0 (FromXcode_14_beta.xip) `2022/06/07`
-   * 16.0 (FromXcode_14_beta_2.xip) `2022/06/27`
-   * 16.0 (FromXcode_14_beta_4.xip (14A5270f)) `2022/07/24`
-   * 16.0 (FromXcode_14.xip) `2022/09/12`
-   * 16.0 (FromXcode_14.0.1_Release_Candidate.xip) `2022/09/20`
-   * 16.0 (FromXcode_14.1_Release_Candidate.xip) `2022/10/20`
-   * 16.1 (FromXcode_14.1_beta.xip) `2022/09/14`
-   * 16.1 (FromXCode_14.1(14B5024h)) `2022/09/16`
-   * 16.1 (FromXcode_14.1_Release_Candidate.xip) `2022/10/20`
-   * 16.1 (FromXcode_14.3_beta_2.xip) `2023/03/03`
-   * 16.4 (FromXcode_14.3_beta_2.xip) `2023/03/03`
-   * 16.4 (FromXcode_14.3(14E222b)) `2023/04/04`
-   * 16.4 (FromXcode_15_beta.xip) `2023/06/07`
+```bash
+python3 deploy.py --dry-run --version 16.4
+```
 
----
+Inspect the repository inventory:
+
+```bash
+python3 deploy.py inventory
+python3 deploy.py inventory --json
+```
+
+Regenerate the README support matrix after adding or removing archives:
+
+```bash
+python3 deploy.py sync-readme
+```
+
+Rebuild future-version placeholders:
+
+```bash
+python3 deploy.py ensure-placeholders --start-major 17 --end-major 26
+```
+
+## Working from Windows or Linux
+
+You can still run inventory, README sync, and placeholder generation from Windows or Linux. Actual Xcode discovery and install validation are intentionally exercised in GitHub Actions on macOS runners.
+
+## GitHub Actions validation
+
+The macOS workflow does four things on every push and pull request:
+
+1. Runs the Python test suite.
+2. Verifies the placeholder tree and generated README are current.
+3. Executes `deploy.py --dry-run` against the real Xcode installation on the GitHub runner.
+4. Executes `deploy.py --dry-run` against a mock Xcode bundle to validate path handling without modifying the runner.
+
+## Adding new DeviceSupport archives
+
+1. Add the verified `.zip` archive directly under `DeviceSupport/`.
+2. Run `python3 deploy.py sync-readme`.
+3. Open a pull request with the iOS version, build number, and source Xcode build noted in the description.
+4. Let GitHub Actions confirm the deployment logic still resolves Xcode correctly on macOS.
+
+## Call For Contributors
+
+If you have access to newer DeviceSupport bundles, especially for iOS `17.0` through `26.0`, contributions are welcome.
+
+- Upload verified archives from shipping Xcode releases or clearly labeled beta builds.
+- Preserve the existing naming convention so the version can be detected from the filename.
+- Include any useful provenance in the archive name, such as the source Xcode build or seed.
+- Open issues or pull requests if a new Xcode packaging pattern appears in macOS 2026 or later.
+
+## Support matrix
+
+<!-- support-table:start -->
+> Latest verified support archive in this repository: **iOS 16.4**.
+> Placeholder directories are reserved through **iOS 26.0**.
+
+| iOS Version | Status | Artifacts | Notes |
+| --- | --- | ---: | --- |
+| 8.0 | Available | 1 | 1 archive |
+| 8.1 | Available | 1 | 1 archive |
+| 8.2 | Available | 1 | 1 archive |
+| 8.3 | Available | 1 | 1 archive |
+| 8.4 | Available | 1 | 1 archive |
+| 9.0 | Available | 1 | 1 archive |
+| 9.1 | Available | 1 | 1 archive |
+| 9.2 | Available | 1 | 1 archive |
+| 9.3 | Available | 1 | 1 archive |
+| 10.0 | Available | 2 | 2 archives |
+| 10.1 | Available | 2 | 2 archives |
+| 10.2 | Available | 2 | 2 archives |
+| 10.3 | Available | 2 | 2 archives |
+| 11.0 | Available | 1 | 1 archive |
+| 11.1 | Available | 2 | 2 archives |
+| 11.2 | Available | 2 | 2 archives |
+| 11.3 | Available | 3 | 3 archives |
+| 11.4 | Available | 4 | 4 archives |
+| 12.0 | Available | 8 | 8 archives |
+| 12.1 | Available | 5 | 5 archives |
+| 12.2 | Available | 3 | 3 archives |
+| 12.3 | Available | 1 | 1 archive |
+| 12.4 | Available | 2 | 2 archives |
+| 13.0 | Available | 2 | 2 archives |
+| 13.1 | Available | 1 | 1 archive |
+| 13.2 | Available | 4 | 4 archives |
+| 13.3 | Available | 2 | 2 archives |
+| 13.4 | Available | 3 | 3 archives |
+| 13.5 | Available | 4 | 4 archives |
+| 13.6 | Available | 2 | 2 archives |
+| 13.7 | Available | 2 | 2 archives |
+| 14.0 | Available | 8 | 8 archives |
+| 14.1 | Available | 2 | 2 archives |
+| 14.2 | Available | 5 | 5 archives |
+| 14.3 | Available | 3 | 3 archives |
+| 14.4 | Available | 4 | 4 archives |
+| 14.5 | Available | 5 | 5 archives |
+| 14.6 | Available | 1 | 1 archive |
+| 15.0 | Available | 8 | 8 archives |
+| 15.2 | Available | 2 | 2 archives |
+| 15.4 | Available | 3 | 3 archives |
+| 15.5 | Available | 2 | 2 archives |
+| 15.6 | Available | 2 | 2 archives |
+| 15.7 | Available | 1 | 1 archive |
+| 16.0 | Available | 6 | 6 archives |
+| 16.1 | Available | 4 | 4 archives |
+| 16.4 | Available | 3 | 3 archives |
+| 17.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 18.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 19.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 20.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 21.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 22.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 23.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 24.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 25.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+| 26.0 | Placeholder | 0 | Reserved placeholder awaiting a contributed DeviceSupport bundle |
+<!-- support-table:end -->
+
+## Maintenance note
+
+HDRvision owns the current maintenance roadmap for this fork. The project stays intentionally lightweight: the repository stores archives, `deploy.py` handles installation and metadata generation, and GitHub Actions provides the macOS validation surface that is not available from Windows or Linux.

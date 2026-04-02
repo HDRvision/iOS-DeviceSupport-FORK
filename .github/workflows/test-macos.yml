@@ -1,0 +1,88 @@
+name: test-macos
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  macos-validation:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Show runner details
+        run: |
+          sw_vers
+          python3 --version
+          xcode-select -p
+          ls -1 /Applications | grep -i '^Xcode' || true
+
+      - name: Run Python tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Verify generated placeholders
+        run: python3 deploy.py ensure-placeholders --check
+
+      - name: Verify generated README support matrix
+        run: python3 deploy.py sync-readme --check
+
+      - name: Dry-run against runner Xcode
+        run: |
+          python3 deploy.py --dry-run --json > dry-run-report.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("dry-run-report.json").read_text(encoding="utf-8"))
+          selected = report["selected_xcode"]
+          assert selected["is_ready"], "Runner Xcode target is not ready."
+          assert Path(selected["developer_dir"]).exists(), "Developer directory does not exist."
+          assert report["archive_count"] > 0, "Repository archive inventory was empty."
+          print(f"Selected Xcode: {selected['display_name']} ({selected.get('version')})")
+          print(f"Pending archives: {report['pending_archive_count']}")
+          PY
+
+      - name: Dry-run against mock Xcode bundle
+        run: |
+          export MOCK_XCODE="$RUNNER_TEMP/Xcode_17_Beta.app"
+          python3 - <<'PY'
+          import os
+          import plistlib
+          from pathlib import Path
+
+          app_path = Path(os.environ["MOCK_XCODE"])
+          info_path = app_path / "Contents" / "Info.plist"
+          device_support_dir = app_path / "Contents" / "Developer" / "Platforms" / "iPhoneOS.platform" / "DeviceSupport"
+          device_support_dir.mkdir(parents=True, exist_ok=True)
+          with info_path.open("wb") as handle:
+              plistlib.dump(
+                  {
+                      "CFBundleName": "Xcode Beta",
+                      "CFBundleShortVersionString": "17.0",
+                  },
+                  handle,
+              )
+          PY
+          python3 deploy.py --dry-run --target "$MOCK_XCODE" --version 16.4 --json > mock-dry-run-report.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("mock-dry-run-report.json").read_text(encoding="utf-8"))
+          selected = report["selected_xcode"]
+          assert selected["display_name"] == "Xcode_17_Beta.app", "Mock target name mismatch."
+          assert selected["version"] == "17.0", "Mock target version mismatch."
+          assert report["archive_count"] >= 1, "Expected at least one matching archive for 16.4."
+          print(f"Mock Xcode validated: {selected['display_name']} ({selected['version']})")
+          print(f"Matching archives for 16.4: {report['archive_count']}")
+          PY
